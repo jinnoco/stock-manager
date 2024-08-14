@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.stockmanager.view.login.LoginScreen
 import com.example.stockmanager.view.signup.SignupScreen
+import com.example.stockmanager.view.stocklist.StockListScreen
 
 @Composable
 fun AppNavHost(navHostController: NavHostController = rememberNavController()) {
@@ -25,6 +26,12 @@ fun AppNavHost(navHostController: NavHostController = rememberNavController()) {
         composable<AppDestination.Signup> {
             SignupScreen(
                 navigator = appNavigator,
+            )
+        }
+
+        composable<AppDestination.StockListScreen> {
+            StockListScreen(
+                navigator = appNavigator
             )
         }
     }
