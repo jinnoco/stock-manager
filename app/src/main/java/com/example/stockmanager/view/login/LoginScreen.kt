@@ -21,7 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.stockmanager.R
-import com.example.stockmanager.view.AppBar
+import com.example.stockmanager.view.widget.AppBar
 import com.example.stockmanager.view.navigation.AppDestination
 import com.example.stockmanager.view.navigation.AppNavigator
 
