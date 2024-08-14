@@ -3,4 +3,9 @@
     <string name="login">Login</string>
     <string name="signup">SignUp</string>
     <string name="stock_list">Stock List</string>
+
+    <string name="select_image">Select Image</string>
+    <string name="open_library">Open Library</string>
+    <string name="take_picture">Take a Picture</string>
+    <string name="cancel">Cancel</string>
 </resources>

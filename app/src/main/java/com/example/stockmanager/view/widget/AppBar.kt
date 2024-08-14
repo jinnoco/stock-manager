@@ -1,4 +1,4 @@
-package com.example.stockmanager.view
+package com.example.stockmanager.view.widget
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
