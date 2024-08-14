@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">StockManager</string>
+    <string name="login">Login</string>
+    <string name="signup">SignUp</string>
+    <string name="stock_list">Stock List</string>
 </resources>
