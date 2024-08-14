@@ -21,6 +21,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import com.example.stockmanager.R
 import com.example.stockmanager.view.widget.AppBar
@@ -105,6 +106,15 @@ fun EditStockScreen(navigator: AppNavigator) {
                     }
                 }
             )
+            Spacer(modifier = Modifier.height(48.dp))
+
+            TextButton(onClick = {
+                // Delete
+                navigator.popBackStack()
+            }) {
+                Text("Delete This Stock", color = Color.Red)
+            }
+
             ImagePickerDialog(
                 showDialog = showDialog,
                 onDismissRequest = { showDialog = false },
