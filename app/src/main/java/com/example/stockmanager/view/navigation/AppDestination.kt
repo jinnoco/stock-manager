@@ -12,4 +12,11 @@ sealed interface AppDestination {
 
     @Serializable
     data object StockListScreen : AppDestination
+
+    @Serializable
+    data object AddStockScreen : AppDestination
+
+    @Serializable
+    data object EditStockScreen : AppDestination
+
 }

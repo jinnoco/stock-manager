@@ -20,9 +20,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.stockmanager.R
-import com.example.stockmanager.view.AppBar
+import com.example.stockmanager.view.widget.AppBar
 import com.example.stockmanager.view.navigation.AppDestination
 import com.example.stockmanager.view.navigation.AppNavigator
+import com.example.stockmanager.view.widget.AddButton
 
 @Composable
 fun StockListScreen(navigator: AppNavigator) {
@@ -30,7 +31,11 @@ fun StockListScreen(navigator: AppNavigator) {
         topBar = {
             AppBar(
                 title = R.string.stock_list,
-                trailingItem = { AddButton {} }
+                trailingItem = {
+                    AddButton(onClick = {
+                        navigator.navigate(AppDestination.AddStockScreen)
+                    })
+                }
             )
         },
     ) { paddingValues ->
@@ -41,8 +46,8 @@ fun StockListScreen(navigator: AppNavigator) {
                 StockItem(
                     image = painterResource(id = R.drawable.ic_launcher_foreground), // Mock
                     name = "Stock ${index + 1}", //Mock
-                    registrationDate = "2023/10/27", // Mock
-                    onClick = { navigator.navigate(AppDestination.Login) } // Todo: Fix Destination
+                    purchaseDate = "2023/10/27", // Mock
+                    onClick = { navigator.navigate(AppDestination.EditStockScreen) }
                 )
             }
         }
@@ -53,7 +58,7 @@ fun StockListScreen(navigator: AppNavigator) {
 fun StockItem(
     image: Painter,
     name: String,
-    registrationDate: String,
+    purchaseDate: String,
     onClick: () -> Unit
 ) {
     Row(
@@ -71,7 +76,7 @@ fun StockItem(
         Spacer(modifier = Modifier.width(16.dp))
         Column {
             Text(text = name, fontWeight = FontWeight.Bold)
-            Text(text = "登録日: $registrationDate")
+            Text(text = "Purchase Date: $purchaseDate")
         }
     }
 }
