@@ -11,8 +11,11 @@ composeBom = "2024.04.01"
 navigationCompose = "2.8.0-beta04"
 hiltNavigationCompose = "1.2.0"
 serialization = "1.6.3"
-
-
+okHttp = "4.11.0"
+okHttpLoggingInterceptor = "4.10.0"
+retrofit = "2.11.0"
+retrofitSerialization = "1.0.0"
+retrofitConverterGson = "2.11.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -32,8 +35,11 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization" }
-
-
+okHttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okHttp" }
+okHttpLoggingInterceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okHttpLoggingInterceptor" }
+retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+retrofitSerialization = { group = "com.jakewharton.retrofit", name = "retrofit2-kotlinx-serialization-converter", version.ref = "retrofitSerialization" }
+retrofitConverterGson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofitConverterGson" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
