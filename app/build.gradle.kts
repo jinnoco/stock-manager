@@ -57,6 +57,12 @@ dependencies {
 
     implementation(libs.hilt.navigation.compose)
 
+    implementation(libs.okHttp)
+    implementation(libs.okHttpLoggingInterceptor)
+    implementation(libs.retrofit)
+    implementation(libs.retrofitSerialization)
+    implementation(libs.retrofitConverterGson)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
