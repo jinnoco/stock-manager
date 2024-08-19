@@ -1,9 +1,9 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.jetbrains.kotlin.serialization)
-
+    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.kotlin.ksp)
 }
 
 android {
@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.stockmanager"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -30,11 +30,14 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.8"
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
     buildFeatures {
         compose = true
@@ -55,6 +58,9 @@ dependencies {
 
     implementation(libs.kotlinx.serialization.json)
 
+    implementation(libs.hilt.android)
+    implementation(libs.androidx.runtime.livedata)
+    ksp(libs.hilt.compiler)
     implementation(libs.hilt.navigation.compose)
 
     implementation(libs.okHttp)
