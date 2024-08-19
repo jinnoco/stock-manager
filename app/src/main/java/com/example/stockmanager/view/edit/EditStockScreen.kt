@@ -29,7 +29,6 @@ import com.example.stockmanager.view.widget.ImagePickerDialog
 import com.example.stockmanager.view.navigation.AppNavigator
 import com.example.stockmanager.view.widget.DoneButton
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun EditStockScreen(navigator: AppNavigator) {
     var name by remember { mutableStateOf("") }
