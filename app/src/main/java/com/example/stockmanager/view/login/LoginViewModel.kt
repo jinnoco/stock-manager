@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.stockmanager.data.model.LoginRequest
+import com.example.stockmanager.data.model.LoginResponse
 import com.example.stockmanager.data.repository.LoginRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -18,22 +19,43 @@ class LoginViewModel @Inject constructor(
     private val _loginSuccess = MutableLiveData<Boolean>()
     val loginSuccess: LiveData<Boolean> = _loginSuccess
 
+    private val _loginError = MutableLiveData<String?>()
+    val loginError: LiveData<String?> = _loginError
+
     fun login(email: String, password: String) {
         viewModelScope.launch {
-            try {
-                val response = loginRepository.login(LoginRequest(email, password))
-                if (response.isSuccessful) {
-                    val loginResponse = response.body()
-                    loginResponse.let { res ->
-                        _loginSuccess.value = true
-                    }
-                } else {
-                    _loginSuccess.value = false
-                }
-            } catch (e: Exception) {
-                _loginSuccess.value = false
+            runCatching {
+                loginRepository.login(LoginRequest(email, password))
+            }.onSuccess { response ->
+                handleResponse(response)
+            }.onFailure { exception ->
+                handleFailure(exception)
             }
         }
     }
 
+    private fun handleResponse(response: retrofit2.Response<LoginResponse>) {
+        if (response.isSuccessful) {
+            response.body()?.let { loginResponse ->
+                if (loginResponse.statusCode == 200) {
+                    _loginSuccess.value = true
+                    _loginError.value = null
+                } else {
+                    _loginSuccess.value = false
+                    _loginError.value = loginResponse.message
+                }
+            } ?: run {
+                _loginSuccess.value = false
+                _loginError.value = "Invalid response body"
+            }
+        } else {
+            _loginSuccess.value = false
+            _loginError.value = "Login failed with status code: ${response.code()}"
+        }
+    }
+
+    private fun handleFailure(exception: Throwable) {
+        _loginSuccess.value = false
+        _loginError.value = exception.message ?: "An unknown error occurred"
+    }
 }
