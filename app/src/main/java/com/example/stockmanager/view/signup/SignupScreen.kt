@@ -25,6 +25,7 @@ import com.example.stockmanager.R
 import com.example.stockmanager.view.widget.AppBar
 import com.example.stockmanager.view.navigation.AppDestination
 import com.example.stockmanager.view.navigation.AppNavigator
+import com.example.stockmanager.view.widget.ErrorDialog
 
 @Composable
 fun SignupScreen(
@@ -35,12 +36,25 @@ fun SignupScreen(
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
     val signupSuccess by viewModel.signupSuccess.observeAsState()
+    val signupError by viewModel.signupError.observeAsState()
+    var showAlert by remember { mutableStateOf(false) }
 
     LaunchedEffect(signupSuccess) {
         if (signupSuccess == true) {
             navigator.navigate(AppDestination.StockListScreen)
         }
     }
+
+    LaunchedEffect(signupError) {
+        showAlert = signupError != null
+    }
+
+    ErrorDialog(
+        showAlert = showAlert,
+        onDismiss = { showAlert = false },
+        title = "SignUp error",
+        errorMessage = signupError
+    )
 
     Scaffold(
         topBar = {
