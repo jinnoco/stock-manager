@@ -25,7 +25,7 @@ interface ApiService {
     suspend fun createStock(@Body stock: StockRequest): Response<StockResponse>
 
     @GET("v1/stocks")
-    suspend fun getStocks(): Response<List<StockResponse>>
+    suspend fun getStocks(): Response<StockResponse>
 
     @PUT("v1/stocks/{id}")
     suspend fun updateStock(

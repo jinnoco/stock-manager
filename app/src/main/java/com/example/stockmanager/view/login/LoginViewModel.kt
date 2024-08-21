@@ -7,13 +7,15 @@ import androidx.lifecycle.viewModelScope
 import com.example.stockmanager.data.model.LoginRequest
 import com.example.stockmanager.data.model.LoginResponse
 import com.example.stockmanager.data.repository.LoginRepository
+import com.example.stockmanager.util.SharedPreferencesUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val loginRepository: LoginRepository
+    private val loginRepository: LoginRepository,
+    private val sharedPreferencesUtil: SharedPreferencesUtil
 ) : ViewModel() {
 
     private val _loginSuccess = MutableLiveData<Boolean>()
@@ -40,6 +42,8 @@ class LoginViewModel @Inject constructor(
                 if (loginResponse.statusCode == 200) {
                     _loginSuccess.value = true
                     _loginError.value = null
+                    val token = loginResponse.result.token
+                    sharedPreferencesUtil.saveToken(token)
                 } else {
                     _loginSuccess.value = false
                     _loginError.value = loginResponse.message

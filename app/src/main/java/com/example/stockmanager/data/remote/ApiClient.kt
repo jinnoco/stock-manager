@@ -1,8 +1,11 @@
 package com.example.stockmanager.data.remote
 
+import android.content.Context
+import com.example.stockmanager.util.SharedPreferencesUtil
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -18,16 +21,27 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(): OkHttpClient {
+    fun provideSharedPreferencesUtil(@ApplicationContext context: Context): SharedPreferencesUtil {
+        return SharedPreferencesUtil(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideOkHttpClient(sharedPreferencesUtil: SharedPreferencesUtil): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(HttpLoggingInterceptor().apply {
                 level = HttpLoggingInterceptor.Level.BODY
             })
             .addInterceptor { chain ->
+                val token = sharedPreferencesUtil.getToken()
                 val request = chain.request().newBuilder()
                     .addHeader("Content-Type", "application/json")
                     .addHeader("x-api-key", X_API_KEY)
-                    .addHeader("Authorization", "auth-token")
+                    .apply {
+                        token?.let {
+                            addHeader("Authorization", it)
+                        }
+                    }
                     .build()
                 chain.proceed(request)
             }

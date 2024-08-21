@@ -1,5 +1,6 @@
 package com.example.stockmanager.view.navigation
 
+import com.example.stockmanager.view.stocklist.StockListViewModel
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -39,8 +40,10 @@ fun AppNavHost(navHostController: NavHostController = rememberNavController()) {
         }
 
         composable<AppDestination.StockListScreen> {
+            val stockListViewModel: StockListViewModel = hiltViewModel()
             StockListScreen(
-                navigator = appNavigator
+                navigator = appNavigator,
+                viewModel = stockListViewModel
             )
         }
 
