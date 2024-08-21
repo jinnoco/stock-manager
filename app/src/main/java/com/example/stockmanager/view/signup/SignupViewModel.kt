@@ -24,9 +24,6 @@ class SignupViewModel @Inject constructor(
     private val _signupError = MutableLiveData<String?>()
     val signupError: LiveData<String?> = _signupError
 
-    private val _token = MutableLiveData<String?>()
-    val token: LiveData<String?> = _token
-
     fun signup(email: String, password: String) {
         viewModelScope.launch {
             runCatching {
