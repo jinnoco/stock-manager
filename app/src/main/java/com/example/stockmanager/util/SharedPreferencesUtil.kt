@@ -23,4 +23,8 @@ class SharedPreferencesUtil(context: Context) {
     fun clearToken() {
         sharedPreferences.edit().remove(TOKEN).apply()
     }
+
+    fun hasToken(): Boolean {
+        return sharedPreferences.contains(TOKEN)
+    }
 }

@@ -16,12 +16,15 @@ import com.example.stockmanager.view.signup.SignupViewModel
 import com.example.stockmanager.view.stocklist.StockListScreen
 
 @Composable
-fun AppNavHost(navHostController: NavHostController = rememberNavController()) {
+fun AppNavHost(
+    navHostController: NavHostController = rememberNavController(),
+    startDestination: AppDestination
+) {
     val appNavigator = AppNavigatorImpl(navHostController)
 
     NavHost(
         navController = navHostController,
-        startDestination = AppDestination.Login,
+        startDestination = startDestination,
     ) {
         composable<AppDestination.Login> {
             val loginViewModel: LoginViewModel = hiltViewModel()
