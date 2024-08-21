@@ -28,7 +28,7 @@ class StockListViewModel @Inject constructor(
         fetchStocks()
     }
 
-    private fun fetchStocks() {
+    fun fetchStocks() {
         viewModelScope.launch {
             val response = stockRepository.getStocks()
             if (response.isSuccessful) {

@@ -4,6 +4,7 @@ import com.example.stockmanager.data.model.LoginRequest
 import com.example.stockmanager.data.model.LoginResponse
 import com.example.stockmanager.data.model.SignUpRequest
 import com.example.stockmanager.data.model.SignUpResponse
+import com.example.stockmanager.data.model.StockListResponse
 import com.example.stockmanager.data.model.StockRequest
 import com.example.stockmanager.data.model.StockResponse
 import retrofit2.Response
@@ -25,13 +26,13 @@ interface ApiService {
     suspend fun createStock(@Body stock: StockRequest): Response<StockResponse>
 
     @GET("v1/stocks")
-    suspend fun getStocks(): Response<StockResponse>
+    suspend fun getStocks(): Response<StockListResponse>
 
     @PUT("v1/stocks/{id}")
     suspend fun updateStock(
         @Path("id") id: String,
         @Body stock: StockRequest
-    ): Response<StockRequest>
+    ): Response<StockResponse>
 
     @DELETE("v1/stocks/{id}")
     suspend fun deleteStock(@Path("id") id: String): Response<Unit>

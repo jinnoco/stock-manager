@@ -63,6 +63,8 @@ dependencies {
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.navigation.compose)
 
+    implementation(libs.coil.compose)
+
     implementation(libs.okHttp)
     implementation(libs.okHttpLoggingInterceptor)
     implementation(libs.retrofit)

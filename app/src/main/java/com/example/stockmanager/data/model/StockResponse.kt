@@ -3,6 +3,12 @@ package com.example.stockmanager.data.model
 data class StockResponse(
     val statusCode: Int,
     val message: String,
+    val result: StockResponseData
+)
+
+data class StockListResponse(
+    val statusCode: Int,
+    val message: String,
     val result: StockResponseResult
 )
 

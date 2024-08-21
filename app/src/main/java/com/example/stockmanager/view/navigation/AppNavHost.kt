@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.stockmanager.view.add.AddStockScreen
+import com.example.stockmanager.view.add.AddStockViewModel
 import com.example.stockmanager.view.add.EditStockScreen
 import com.example.stockmanager.view.login.LoginScreen
 import com.example.stockmanager.view.login.LoginViewModel
@@ -51,8 +52,10 @@ fun AppNavHost(
         }
 
         composable<AppDestination.AddStockScreen> {
+            val addStockViewModel: AddStockViewModel = hiltViewModel()
             AddStockScreen(
-                navigator = appNavigator
+                navigator = appNavigator,
+                viewModel = addStockViewModel
             )
         }
 

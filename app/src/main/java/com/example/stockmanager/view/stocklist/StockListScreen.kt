@@ -49,6 +49,10 @@ fun StockListScreen(
         showAlert = error != null
     }
 
+    LaunchedEffect(Unit) {
+        viewModel.fetchStocks()
+    }
+
     ErrorDialog(
         showAlert = showAlert,
         onDismiss = { showAlert = false },
