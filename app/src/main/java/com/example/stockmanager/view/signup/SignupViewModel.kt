@@ -7,13 +7,15 @@ import androidx.lifecycle.viewModelScope
 import com.example.stockmanager.data.model.SignUpRequest
 import com.example.stockmanager.data.model.SignUpResponse
 import com.example.stockmanager.data.repository.SignupRepository
+import com.example.stockmanager.util.SharedPreferencesUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SignupViewModel @Inject constructor(
-    private val signupRepository: SignupRepository
+    private val signupRepository: SignupRepository,
+    private val sharedPreferencesUtil: SharedPreferencesUtil
 ) : ViewModel() {
 
     private val _signupSuccess = MutableLiveData<Boolean>()
@@ -21,9 +23,6 @@ class SignupViewModel @Inject constructor(
 
     private val _signupError = MutableLiveData<String?>()
     val signupError: LiveData<String?> = _signupError
-
-    private val _token = MutableLiveData<String?>()
-    val token: LiveData<String?> = _token
 
     fun signup(email: String, password: String) {
         viewModelScope.launch {
@@ -43,6 +42,8 @@ class SignupViewModel @Inject constructor(
                 if (signUpResponse.statusCode == 201) {
                     _signupSuccess.value = true
                     _signupError.value = null
+                    val token = signUpResponse.result.token
+                    sharedPreferencesUtil.saveToken(token)
                 } else {
                     _signupSuccess.value = false
                     _signupError.value = signUpResponse.message

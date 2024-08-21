@@ -13,27 +13,55 @@ import androidx.compose.ui.unit.dp
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import android.app.DatePickerDialog
-
+import android.net.Uri
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.res.painterResource
+import coil.compose.rememberAsyncImagePainter
 import com.example.stockmanager.R
+import com.example.stockmanager.data.model.StockRequest
+import com.example.stockmanager.util.Base64Util
 import com.example.stockmanager.view.widget.AppBar
 import com.example.stockmanager.view.widget.ImagePickerDialog
 import com.example.stockmanager.view.navigation.AppNavigator
 import com.example.stockmanager.view.widget.DoneButton
+import com.example.stockmanager.view.widget.ErrorDialog
 
 @Composable
-fun AddStockScreen(navigator: AppNavigator) {
+fun AddStockScreen(
+    navigator: AppNavigator,
+    viewModel: AddStockViewModel
+) {
     var name by remember { mutableStateOf("") }
     var purchaseDate by remember { mutableStateOf(LocalDate.now()) }
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
     val context = LocalContext.current
     val formattedDate = purchaseDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+    val error by viewModel.error.observeAsState()
+    var showCameraDialog by remember { mutableStateOf(false) }
+    var showAlert by remember { mutableStateOf(false) }
+    val isStockAdded by viewModel.isStockAdded.collectAsState()
 
-    var showDialog by remember { mutableStateOf(false) }
+    LaunchedEffect(error) {
+        showAlert = error != null
+    }
+
+    LaunchedEffect(isStockAdded) {
+        if (isStockAdded) {
+            navigator.popBackStack()
+        }
+    }
+
+    ErrorDialog(
+        showAlert = showAlert,
+        onDismiss = { showAlert = false },
+        title = R.string.alert_error,
+        errorMessage = error
+    )
 
     Scaffold(
         topBar = {
@@ -41,9 +69,19 @@ fun AddStockScreen(navigator: AppNavigator) {
                 title = R.string.stock_list,
                 onBack = { navigator.popBackStack() },
                 trailingItem = {
-                    DoneButton(onClick = {
-                        navigator.popBackStack()
-                    })
+                    DoneButton(
+                        onClick = {
+                            val base64Image = imageUri?.let { uri ->
+                                Base64Util().convertUriToBase64(context, uri)
+                            } ?: ""
+                            viewModel.addStock(
+                                StockRequest(
+                                    name,
+                                    purchaseDate.toString(),
+                                    base64Image
+                                )
+                            )
+                        })
                 }
             )
         },
@@ -58,10 +96,16 @@ fun AddStockScreen(navigator: AppNavigator) {
                 modifier = Modifier
                     .size(250.dp)
                     .clickable {
-                        showDialog = true
+                        showCameraDialog = true
                     },
             ) {
-                Image(
+                imageUri?.let {
+                    Image(
+                        painter = rememberAsyncImagePainter(it),
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                } ?: Image(
                     painter = painterResource(id = R.drawable.upload_image),
                     contentDescription = null,
                     modifier = Modifier.fillMaxSize(),
@@ -103,10 +147,10 @@ fun AddStockScreen(navigator: AppNavigator) {
                 }
             )
             ImagePickerDialog(
-                showDialog = showDialog,
-                onDismissRequest = { showDialog = false },
-                onTakePicture = {},
-                onSelectImage = {},
+                showDialog = showCameraDialog,
+                onDismissRequest = { showCameraDialog = false },
+                onTakePicture = { uri -> imageUri = uri },
+                onSelectImage = { uri -> imageUri = uri },
             )
         }
     }

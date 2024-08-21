@@ -1,7 +1,5 @@
 package com.example.stockmanager.view.add
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -13,30 +11,66 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import android.app.DatePickerDialog
-
+import android.net.Uri
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.res.painterResource
+import coil.compose.rememberAsyncImagePainter
 import com.example.stockmanager.R
+import com.example.stockmanager.data.model.StockRequest
+import com.example.stockmanager.util.Base64Util
+import com.example.stockmanager.view.edit.EditStockViewModel
 import com.example.stockmanager.view.widget.AppBar
 import com.example.stockmanager.view.widget.ImagePickerDialog
 import com.example.stockmanager.view.navigation.AppNavigator
 import com.example.stockmanager.view.widget.DoneButton
+import com.example.stockmanager.view.widget.ErrorDialog
 
 @Composable
-fun EditStockScreen(navigator: AppNavigator) {
-    var name by remember { mutableStateOf("") }
-    var purchaseDate by remember { mutableStateOf(LocalDate.now()) }
+fun EditStockScreen(
+    navigator: AppNavigator,
+    viewModel: EditStockViewModel,
+    id: String,
+    name: String,
+    image: String?,
+    purchaseDate: String
+) {
+    var nameState by remember { mutableStateOf(name) }
+    var purchaseDateState by remember { mutableStateOf(LocalDate.parse(purchaseDate)) }
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
     val context = LocalContext.current
-    val formattedDate = purchaseDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+    val formattedDate by remember { mutableStateOf(purchaseDate) }
 
-    var showDialog by remember { mutableStateOf(false) }
+    var showCameraDialog by remember { mutableStateOf(false) }
+    var showAlert by remember { mutableStateOf(false) }
+    val error by viewModel.error.observeAsState()
+    val isStockEdited by viewModel.isStockEdited.collectAsState()
+    val isStockDeleted by viewModel.isStockDeleted.collectAsState()
+
+    LaunchedEffect(error) {
+        showAlert = error != null
+    }
+
+    LaunchedEffect(isStockEdited, isStockDeleted) {
+        if (isStockEdited || isStockDeleted) {
+            navigator.popBackStack()
+        }
+    }
+
+    ErrorDialog(
+        showAlert = showAlert,
+        onDismiss = { showAlert = false },
+        title = R.string.alert_error,
+        errorMessage = error
+    )
 
     Scaffold(
         topBar = {
@@ -44,9 +78,21 @@ fun EditStockScreen(navigator: AppNavigator) {
                 title = R.string.stock_list,
                 onBack = { navigator.popBackStack() },
                 trailingItem = {
-                    DoneButton(onClick = {
-                        navigator.popBackStack()
-                    })
+                    DoneButton(
+                        onClick = {
+                            val base64Image = imageUri?.let { uri ->
+                                Base64Util().convertUriToBase64(context, uri)
+                            } ?: image ?: ""  // 新しい画像が選択されなければ、元の画像を使う
+                            viewModel.editStock(
+                                id.toInt(),
+                                StockRequest(
+                                    nameState,
+                                    purchaseDateState.toString(),
+                                    base64Image
+                                )
+                            )
+                        }
+                    )
                 }
             )
         },
@@ -61,21 +107,32 @@ fun EditStockScreen(navigator: AppNavigator) {
                 modifier = Modifier
                     .size(250.dp)
                     .clickable {
-                        showDialog = true
+                        showCameraDialog = true
                     },
             ) {
+                val painter = when {
+                    imageUri != null -> rememberAsyncImagePainter(imageUri)
+                    image != null -> {
+                        val imageBitmap = Base64Util().decodeBase64ToBitmap(image)?.asImageBitmap()
+                        imageBitmap?.let { BitmapPainter(it) }
+                            ?: painterResource(id = R.drawable.ic_launcher_foreground)
+                    }
+
+                    else -> painterResource(id = R.drawable.ic_launcher_foreground)
+                }
+
                 Image(
-                    painter = painterResource(id = R.drawable.upload_image),
+                    painter = painter,
                     contentDescription = null,
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.size(250.dp)
                 )
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
             TextField(
-                value = name,
-                onValueChange = { name = it },
+                value = nameState,
+                onValueChange = { nameState = it },
                 label = { Text("Name") },
                 modifier = Modifier.fillMaxWidth(0.8f)
             )
@@ -93,11 +150,11 @@ fun EditStockScreen(navigator: AppNavigator) {
                         val datePicker = DatePickerDialog(
                             context,
                             { _, year, month, dayOfMonth ->
-                                purchaseDate = LocalDate.of(year, month + 1, dayOfMonth)
+                                purchaseDateState = LocalDate.of(year, month + 1, dayOfMonth)
                             },
-                            purchaseDate.year,
-                            purchaseDate.monthValue - 1,
-                            purchaseDate.dayOfMonth
+                            purchaseDateState.year,
+                            purchaseDateState.monthValue - 1,
+                            purchaseDateState.dayOfMonth
                         )
                         datePicker.show()
                     }) {
@@ -108,19 +165,17 @@ fun EditStockScreen(navigator: AppNavigator) {
             Spacer(modifier = Modifier.height(48.dp))
 
             TextButton(onClick = {
-                // Delete
-                navigator.popBackStack()
+                viewModel.deleteStock(id.toInt())
             }) {
                 Text("Delete This Stock", color = Color.Red)
             }
 
             ImagePickerDialog(
-                showDialog = showDialog,
-                onDismissRequest = { showDialog = false },
-                onTakePicture = {},
-                onSelectImage = {},
+                showDialog = showCameraDialog,
+                onDismissRequest = { showCameraDialog = false },
+                onTakePicture = { uri -> imageUri = uri },
+                onSelectImage = { uri -> imageUri = uri },
             )
         }
     }
 }
-

@@ -11,5 +11,6 @@
 
     <string name="alert_login_error">Login error</string>
     <string name="alert_signup_error">SignUp error</string>
+    <string name="alert_error">Error</string>
     <string name="alert_ok">OK</string>
 </resources>
