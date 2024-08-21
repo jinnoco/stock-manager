@@ -1,7 +1,5 @@
 package com.example.stockmanager.view.add
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -28,7 +26,6 @@ import com.example.stockmanager.view.widget.ImagePickerDialog
 import com.example.stockmanager.view.navigation.AppNavigator
 import com.example.stockmanager.view.widget.DoneButton
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AddStockScreen(navigator: AppNavigator) {
     var name by remember { mutableStateOf("") }

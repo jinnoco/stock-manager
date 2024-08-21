@@ -12,7 +12,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -24,11 +26,35 @@ import com.example.stockmanager.R
 import com.example.stockmanager.view.widget.AppBar
 import com.example.stockmanager.view.navigation.AppDestination
 import com.example.stockmanager.view.navigation.AppNavigator
+import com.example.stockmanager.view.widget.ErrorDialog
 
 @Composable
-fun LoginScreen(navigator: AppNavigator) {
+fun LoginScreen(
+    navigator: AppNavigator,
+    viewModel: LoginViewModel
+) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    val loginSuccess by viewModel.loginSuccess.observeAsState()
+    val loginError by viewModel.loginError.observeAsState()
+    var showAlert by remember { mutableStateOf(false) }
+
+    LaunchedEffect(loginSuccess) {
+        if (loginSuccess == true) {
+            navigator.navigate(AppDestination.StockListScreen)
+        }
+    }
+
+    LaunchedEffect(loginError) {
+        showAlert = loginError != null
+    }
+
+    ErrorDialog(
+        showAlert = showAlert,
+        onDismiss = { showAlert = false },
+        title = R.string.alert_login_error,
+        errorMessage = loginError
+    )
 
     Scaffold(
         topBar = {
@@ -57,7 +83,7 @@ fun LoginScreen(navigator: AppNavigator) {
                 visualTransformation = PasswordVisualTransformation()
             )
             Spacer(modifier = Modifier.height(48.dp))
-            Button(onClick = { navigator.navigate(AppDestination.StockListScreen) }) {
+            Button(onClick = { viewModel.login(email, password) }) {
                 Text("Login")
             }
             Spacer(modifier = Modifier.height(32.dp))

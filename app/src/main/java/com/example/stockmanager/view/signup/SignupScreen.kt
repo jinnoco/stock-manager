@@ -11,7 +11,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -23,12 +25,36 @@ import com.example.stockmanager.R
 import com.example.stockmanager.view.widget.AppBar
 import com.example.stockmanager.view.navigation.AppDestination
 import com.example.stockmanager.view.navigation.AppNavigator
+import com.example.stockmanager.view.widget.ErrorDialog
 
 @Composable
-fun SignupScreen(navigator: AppNavigator) {
+fun SignupScreen(
+    navigator: AppNavigator,
+    viewModel: SignupViewModel
+) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
+    val signupSuccess by viewModel.signupSuccess.observeAsState()
+    val signupError by viewModel.signupError.observeAsState()
+    var showAlert by remember { mutableStateOf(false) }
+
+    LaunchedEffect(signupSuccess) {
+        if (signupSuccess == true) {
+            navigator.navigate(AppDestination.StockListScreen)
+        }
+    }
+
+    LaunchedEffect(signupError) {
+        showAlert = signupError != null
+    }
+
+    ErrorDialog(
+        showAlert = showAlert,
+        onDismiss = { showAlert = false },
+        title =  R.string.alert_signup_error,
+        errorMessage = signupError
+    )
 
     Scaffold(
         topBar = {
@@ -64,7 +90,7 @@ fun SignupScreen(navigator: AppNavigator) {
                 visualTransformation = PasswordVisualTransformation()
             )
             Spacer(modifier = Modifier.height(48.dp))
-            Button(onClick = { navigator.navigate(AppDestination.StockListScreen) }) {
+            Button(onClick = { viewModel.signup(email, password) }) {
                 Text("Sign Up")
             }
         }
