@@ -53,13 +53,14 @@ fun EditStockScreen(
     var showAlert by remember { mutableStateOf(false) }
     val error by viewModel.error.observeAsState()
     val isStockEdited by viewModel.isStockEdited.collectAsState()
+    val isStockDeleted by viewModel.isStockDeleted.collectAsState()
 
     LaunchedEffect(error) {
         showAlert = error != null
     }
 
-    LaunchedEffect(isStockEdited) {
-        if (isStockEdited) {
+    LaunchedEffect(isStockEdited, isStockDeleted) {
+        if (isStockEdited || isStockDeleted) {
             navigator.popBackStack()
         }
     }
@@ -164,8 +165,7 @@ fun EditStockScreen(
             Spacer(modifier = Modifier.height(48.dp))
 
             TextButton(onClick = {
-                // Delete
-                navigator.popBackStack()
+                viewModel.deleteStock(id.toInt())
             }) {
                 Text("Delete This Stock", color = Color.Red)
             }

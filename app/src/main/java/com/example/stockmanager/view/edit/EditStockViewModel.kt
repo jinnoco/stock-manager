@@ -24,6 +24,9 @@ class EditStockViewModel @Inject constructor(
     private val _isStockEdited = MutableStateFlow(false)
     val isStockEdited: StateFlow<Boolean> = _isStockEdited.asStateFlow()
 
+    private val _isStockDeleted = MutableStateFlow(false)
+    val isStockDeleted: StateFlow<Boolean> = _isStockDeleted.asStateFlow()
+
     fun editStock(id: Int, request: StockRequest) {
         viewModelScope.launch {
             val response = stockRepository.updateStocks(
@@ -49,6 +52,29 @@ class EditStockViewModel @Inject constructor(
                 response.body()?.let {
                     _error.value = it.message
                     _isStockEdited.value = false
+                }
+            }
+        }
+    }
+
+    fun deleteStock(id: Int) {
+        viewModelScope.launch {
+            val response = stockRepository.deleteStocks(id)
+            if (response.isSuccessful) {
+                response.body()?.let {
+                    val statusCode = it.statusCode
+                    if (statusCode == 200) {
+                        _error.value = null
+                        _isStockDeleted.value = true
+                    } else {
+                        _error.value = it.message
+                        _isStockDeleted.value = false
+                    }
+                }
+            } else {
+                response.body()?.let {
+                    _error.value = it.message
+                    _isStockDeleted.value = false
                 }
             }
         }

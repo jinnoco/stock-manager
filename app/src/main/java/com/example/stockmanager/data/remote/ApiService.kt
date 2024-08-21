@@ -35,6 +35,6 @@ interface ApiService {
     ): Response<StockResponse>
 
     @DELETE("v1/stocks/{id}")
-    suspend fun deleteStock(@Path("id") id: String): Response<Unit>
+    suspend fun deleteStock(@Path("id") id: Int): Response<StockResponse>
 }
 
