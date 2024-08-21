@@ -17,6 +17,11 @@ sealed interface AppDestination {
     data object AddStockScreen : AppDestination
 
     @Serializable
-    data object EditStockScreen : AppDestination
+    data class EditStockScreen(
+        val id: String,
+        val name: String,
+        val image: String?,
+        val purchaseDate: String
+    ) : AppDestination
 
 }

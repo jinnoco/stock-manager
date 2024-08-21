@@ -30,7 +30,7 @@ interface ApiService {
 
     @PUT("v1/stocks/{id}")
     suspend fun updateStock(
-        @Path("id") id: String,
+        @Path("id") id: Int,
         @Body stock: StockRequest
     ): Response<StockResponse>
 

@@ -81,7 +81,16 @@ fun StockListScreen(
                         base64Image = stock.image,
                         name = stock.name,
                         purchaseDate = stock.purchaseDate,
-                        onClick = { navigator.navigate(AppDestination.EditStockScreen) }
+                        onClick = {
+                            navigator.navigate(
+                                AppDestination.EditStockScreen(
+                                    id = stock.id,
+                                    name = stock.name,
+                                    image = stock.image,
+                                    purchaseDate = stock.purchaseDate
+                                )
+                            )
+                        }
                     )
                 }
             }

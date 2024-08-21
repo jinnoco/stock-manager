@@ -10,6 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.stockmanager.view.add.AddStockScreen
 import com.example.stockmanager.view.add.AddStockViewModel
 import com.example.stockmanager.view.add.EditStockScreen
+import com.example.stockmanager.view.edit.EditStockViewModel
 import com.example.stockmanager.view.login.LoginScreen
 import com.example.stockmanager.view.login.LoginViewModel
 import com.example.stockmanager.view.signup.SignupScreen
@@ -59,9 +60,21 @@ fun AppNavHost(
             )
         }
 
-        composable<AppDestination.EditStockScreen> {
+        composable<AppDestination.EditStockScreen> { backStackEntry ->
+            val editStockViewModel: EditStockViewModel = hiltViewModel()
+
+            val id = backStackEntry.arguments?.getString("id") ?: ""
+            val name = backStackEntry.arguments?.getString("name") ?: ""
+            val image = backStackEntry.arguments?.getString("image")
+            val purchaseDate = backStackEntry.arguments?.getString("purchaseDate") ?: ""
+
             EditStockScreen(
-                navigator = appNavigator
+                navigator = appNavigator,
+                viewModel = editStockViewModel,
+                id = id,
+                name = name,
+                image = image,
+                purchaseDate = purchaseDate
             )
         }
     }

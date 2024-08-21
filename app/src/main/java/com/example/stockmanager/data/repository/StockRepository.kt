@@ -18,7 +18,7 @@ class StockRepository  @Inject constructor(
         return api.createStock(request)
     }
 
-    suspend fun updateStocks(id: String, request: StockRequest): Response<StockResponse> {
+    suspend fun updateStocks(id: Int, request: StockRequest): Response<StockResponse> {
         return api.updateStock(id, request)
     }
 }
