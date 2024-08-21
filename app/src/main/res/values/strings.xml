@@ -8,4 +8,8 @@
     <string name="open_library">Open Library</string>
     <string name="take_picture">Take a Picture</string>
     <string name="cancel">Cancel</string>
+
+    <string name="alert_login_error">Login error</string>
+    <string name="alert_signup_error">SignUp error</string>
+    <string name="alert_ok">OK</string>
 </resources>

@@ -52,7 +52,7 @@ fun SignupScreen(
     ErrorDialog(
         showAlert = showAlert,
         onDismiss = { showAlert = false },
-        title = "SignUp error",
+        title =  R.string.alert_signup_error,
         errorMessage = signupError
     )
 

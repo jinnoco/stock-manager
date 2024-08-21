@@ -52,7 +52,7 @@ fun LoginScreen(
     ErrorDialog(
         showAlert = showAlert,
         onDismiss = { showAlert = false },
-        title = "Login error",
+        title = R.string.alert_login_error,
         errorMessage = loginError
     )
 
